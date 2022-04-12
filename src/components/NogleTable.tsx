@@ -8,6 +8,7 @@ const NogleTableWrap = styled.div`
   flex-direction: column;
   .header {
     display: flex;
+    margin-bottom: 5px;
     > div {
       flex: 1;
       text-align: right;
@@ -19,10 +20,11 @@ const NogleTableWrap = styled.div`
 type NogleTableProps = {
   header?: string[];
   options: Quote[];
+  priceColor: PriceColor;
 };
 
 const NogleTable = (props: NogleTableProps) => {
-  const { header, options } = props;
+  const { header, options, priceColor } = props;
   return (
     <NogleTableWrap>
       {header && (
@@ -34,7 +36,7 @@ const NogleTable = (props: NogleTableProps) => {
       )}
       {options.map(({ price, size, cumulativeTotal }) => (
         <NogleRow
-          quoteType={PriceColor.Sell}
+          priceColor={priceColor}
           price={price}
           size={size}
           cumulativeTotal={cumulativeTotal}

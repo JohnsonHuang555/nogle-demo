@@ -13,18 +13,18 @@ export enum PriceColor {
 
 const Container = styled.div`
   margin: 30px;
-  width: 400px;
+  width: 350px;
   background: #1e2c4c;
   .title {
     color: #fff;
     padding: 10px;
-    border-bottom: 1px solid #fff;
+    border-bottom: 1px solid #8698aa;
   }
-  .buy-quote-table,
+  .buy-quote-table {
+    padding: 5px 15px 10px 15px;
+  }
   .sell-quote-table {
-    padding: 0 15px;
-  }
-  .last-price {
+    padding: 5px 15px;
   }
 `;
 
@@ -114,7 +114,7 @@ const fakeData: Order = {
     },
   ],
   lastPrice: '9999',
-  gain: Gain.Up,
+  gain: Gain.Down,
   timestamp: 123,
   symbol: '',
 };
@@ -125,12 +125,15 @@ function App() {
       <div className="title">Order book</div>
       <div className="sell-quote-table">
         <NogleTable
-          options={fakeData.sellQuote}
           header={['Price (USD)', 'Size', 'Total']}
+          options={fakeData.sellQuote}
+          priceColor={PriceColor.Sell}
         />
       </div>
       <NogleLastPrice lastPrice={fakeData.lastPrice} gain={fakeData.gain} />
-      <div className="buy-quote-table"></div>
+      <div className="buy-quote-table">
+        <NogleTable options={fakeData.buyQuote} priceColor={PriceColor.Buy} />
+      </div>
     </Container>
   );
 }
