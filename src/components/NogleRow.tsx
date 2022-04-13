@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { PriceColor } from '../App';
+import { convertPriceFormat } from '../utils/format';
 
 type NogleRowWrapProps = Pick<NogleRowProps, 'priceColor'>;
 
@@ -27,9 +28,9 @@ const NogleRow = (props: NogleRowProps) => {
 
   return (
     <NogleRowWrap priceColor={quoteType}>
-      <div className="price">{price}</div>
-      <div>{size}</div>
-      <div>{cumulativeTotal}</div>
+      <div className="price">{convertPriceFormat(price, 1)}</div>
+      <div>{convertPriceFormat(size)}</div>
+      <div>{convertPriceFormat(cumulativeTotal)}</div>
     </NogleRowWrap>
   );
 };

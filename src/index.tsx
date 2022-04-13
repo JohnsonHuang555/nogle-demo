@@ -3,10 +3,22 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import { applyMiddleware, createStore } from 'redux';
+import { composeWithDevTools } from 'redux-devtools-extension';
+import combinedReducer from './reducers/combinedReducer';
+import SocketMiddleware from './middleware/SocketMiddleware';
+import { Provider } from 'react-redux';
+
+export const store = createStore(
+  combinedReducer,
+  composeWithDevTools(applyMiddleware(SocketMiddleware)) // middleware
+);
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <Provider store={store}>
+      <App />
+    </Provider>
   </React.StrictMode>,
   document.getElementById('root')
 );

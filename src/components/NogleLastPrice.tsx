@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import { PriceColor } from '../App';
 import { Gain } from '../domain/models/Quote';
+import { convertPriceFormat } from '../utils/format';
 import Arrow from './icons/Arrow';
 
 type NogleLastPriceWrapProps = {
@@ -64,7 +65,7 @@ const NogleLastPrice = (props: NogleLastPriceProps) => {
       isRotate={getColor().isRotate}
       backgroundColor={getColor().backgroundColor}
     >
-      <div className="last-price">{lastPrice}</div>
+      <div className="last-price">{convertPriceFormat(lastPrice, 1)}</div>
       <Arrow />
     </NogleLastPriceWrap>
   );

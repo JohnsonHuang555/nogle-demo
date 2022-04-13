@@ -30,12 +30,13 @@ const NogleTable = (props: NogleTableProps) => {
       {header && (
         <div className="header">
           {header.map((h) => (
-            <div>{h}</div>
+            <div key={h}>{h}</div>
           ))}
         </div>
       )}
-      {options.map(({ price, size, cumulativeTotal }) => (
+      {options.map(({ price, size, cumulativeTotal }, index) => (
         <NogleRow
+          key={index}
           priceColor={priceColor}
           price={price}
           size={size}
