@@ -53,13 +53,13 @@ function App() {
       <div className="sell-quote-table">
         <NogleTable
           header={['Price (USD)', 'Size', 'Total']}
-          options={sellQuote}
+          quotes={sellQuote}
           priceColor={PriceColor.Sell}
         />
       </div>
       <NogleLastPrice lastPrice={lastPrice} gain={gain} />
       <div className="buy-quote-table">
-        <NogleTable options={buyQuote} priceColor={PriceColor.Buy} />
+        <NogleTable quotes={buyQuote} priceColor={PriceColor.Buy} />
       </div>
     </Container>
   );

@@ -1,3 +1,4 @@
+import { useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { PriceColor } from '../App';
 import { Quote } from '../domain/models/Quote';
@@ -20,12 +21,26 @@ const NogleTableWrap = styled.div`
 
 type NogleTableProps = {
   header?: string[];
-  options: Quote[];
+  quotes: Quote[];
   priceColor: PriceColor;
 };
 
 const NogleTable = (props: NogleTableProps) => {
-  const { header, options, priceColor } = props;
+  const prevQuotesRef = useRef<string[]>();
+  const { header, quotes, priceColor } = props;
+  const [newQuotes, setNewQuotes] = useState<string[]>();
+
+  const quotesPrices = useMemo(() => {
+    return quotes.map((q) => q.price);
+  }, [quotes]);
+
+  useEffect(() => {
+    const nq = quotesPrices.filter((q) => !prevQuotesRef.current?.includes(q));
+    setNewQuotes(nq);
+    // 存前一個值
+    prevQuotesRef.current = quotesPrices;
+  }, [quotesPrices]);
+
   return (
     <NogleTableWrap>
       {header && (
@@ -35,13 +50,14 @@ const NogleTable = (props: NogleTableProps) => {
           ))}
         </div>
       )}
-      {options.map(({ price, size, cumulativeTotal }) => (
+      {quotes.map(({ price, size, cumulativeTotal }) => (
         <NogleRow
           key={price}
           priceColor={priceColor}
           price={price}
           size={size}
           cumulativeTotal={cumulativeTotal}
+          newQuotes={newQuotes}
         />
       ))}
     </NogleTableWrap>

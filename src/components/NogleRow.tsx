@@ -6,14 +6,18 @@ import { convertPriceFormat } from '../utils/format';
 type NogleRowWrapProps = Pick<NogleRowProps, 'priceColor'> & {
   isSizeChanged: boolean;
   sizeGainColor: string;
+  isNewQuote: boolean;
+  newQuoteColor: string;
 };
 
 const NogleRowWrap = styled.div<NogleRowWrapProps>`
   display: flex;
   padding: 2px 10px;
-  &:hover {
-    background: #334573;
-  }
+  transition: all 0.3s;
+  background: ${(props) => (props.isNewQuote ? props.newQuoteColor : '')};
+  /* &:hover {
+    background: #334573 !important;
+  } */
   > div {
     flex: 1;
     text-align: right;
@@ -24,6 +28,7 @@ const NogleRowWrap = styled.div<NogleRowWrapProps>`
   }
   .size {
     transition: all 0.3s;
+    margin-left: 10px;
     background: ${(props) => (props.isSizeChanged ? props.sizeGainColor : '')};
   }
 `;
@@ -33,13 +38,16 @@ type NogleRowProps = {
   size: string;
   cumulativeTotal: string;
   priceColor: PriceColor;
+  newQuotes?: string[];
 };
 
 const NogleRow = (props: NogleRowProps) => {
   const prevSizeRef = useRef<string>();
   const [isSizeChanged, setIsSizeChanged] = useState(false);
   const [sizeGainColor, setSizeGainColor] = useState<string>('');
-  const { price, size, cumulativeTotal, priceColor: quoteType } = props;
+  const [isNewQuote, setIsNewQuote] = useState(false);
+  const [newQuoteColor, setNewQuoteColor] = useState<string>('');
+  const { price, size, cumulativeTotal, priceColor, newQuotes } = props;
 
   useEffect(() => {
     if (prevSizeRef.current) {
@@ -55,6 +63,17 @@ const NogleRow = (props: NogleRowProps) => {
     prevSizeRef.current = size;
   }, [size]);
 
+  useEffect(() => {
+    if (newQuotes?.length && newQuotes.includes(price)) {
+      if (priceColor === PriceColor.Sell) {
+        setNewQuoteColor('rgba(255, 91, 90, 0.5)');
+      } else {
+        setNewQuoteColor('rgba(0, 177, 93, 0.5)');
+      }
+      showRowAnimation();
+    }
+  }, [newQuotes]);
+
   const showSizeAnimation = () => {
     setIsSizeChanged(true);
     setTimeout(() => {
@@ -62,16 +81,33 @@ const NogleRow = (props: NogleRowProps) => {
     }, 500);
   };
 
+  const showRowAnimation = () => {
+    setIsNewQuote(true);
+    setTimeout(() => {
+      setIsNewQuote(false);
+    }, 100);
+  };
+
+  const handleMouseHover = () => {};
+  const handleMouseOut = () => {};
+
   return (
-    <NogleRowWrap
-      priceColor={quoteType}
-      isSizeChanged={isSizeChanged}
-      sizeGainColor={sizeGainColor}
-    >
-      <div className="price">{convertPriceFormat(price, 1)}</div>
-      <div className="size">{convertPriceFormat(size)}</div>
-      <div>{convertPriceFormat(cumulativeTotal)}</div>
-    </NogleRowWrap>
+    <>
+      <NogleRowWrap
+        priceColor={priceColor}
+        isSizeChanged={isSizeChanged}
+        sizeGainColor={sizeGainColor}
+        isNewQuote={isNewQuote}
+        newQuoteColor={newQuoteColor}
+        onMouseOver={handleMouseHover}
+        onMouseOut={handleMouseOut}
+      >
+        <div className="price">{convertPriceFormat(price, 1)}</div>
+        <div className="size">{convertPriceFormat(size)}</div>
+        <div>{convertPriceFormat(cumulativeTotal)}</div>
+      </NogleRowWrap>
+      <div>123</div>
+    </>
   );
 };
 
