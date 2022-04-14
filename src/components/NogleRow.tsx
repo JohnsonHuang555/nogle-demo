@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { PriceColor } from '../App';
 import { convertPriceFormat } from '../utils/format';
@@ -34,20 +34,33 @@ const NogleRowWrap = styled.div<NogleRowWrapProps>`
 `;
 
 type NogleRowProps = {
+  index: number;
   price: string;
   size: string;
   cumulativeTotal: string;
   priceColor: PriceColor;
   newQuotes?: string[];
+  onMouseOver: (index: number, e: any) => void;
+  onMouseOut: () => void;
 };
 
 const NogleRow = (props: NogleRowProps) => {
   const prevSizeRef = useRef<string>();
+  const rowRef = useRef<HTMLDivElement>(null);
   const [isSizeChanged, setIsSizeChanged] = useState(false);
   const [sizeGainColor, setSizeGainColor] = useState<string>('');
   const [isNewQuote, setIsNewQuote] = useState(false);
   const [newQuoteColor, setNewQuoteColor] = useState<string>('');
-  const { price, size, cumulativeTotal, priceColor, newQuotes } = props;
+  const {
+    index,
+    price,
+    size,
+    cumulativeTotal,
+    priceColor,
+    newQuotes,
+    onMouseOver,
+    onMouseOut,
+  } = props;
 
   useEffect(() => {
     if (prevSizeRef.current) {
@@ -88,26 +101,24 @@ const NogleRow = (props: NogleRowProps) => {
     }, 100);
   };
 
-  const handleMouseHover = () => {};
-  const handleMouseOut = () => {};
+  // 把 callback 保存起來，節省效能，不然會因為 props 變了會一直觸發
+  const memoryMouseOver = useCallback((e) => onMouseOver(index, e), []);
 
   return (
-    <>
-      <NogleRowWrap
-        priceColor={priceColor}
-        isSizeChanged={isSizeChanged}
-        sizeGainColor={sizeGainColor}
-        isNewQuote={isNewQuote}
-        newQuoteColor={newQuoteColor}
-        onMouseOver={handleMouseHover}
-        onMouseOut={handleMouseOut}
-      >
-        <div className="price">{convertPriceFormat(price, 1)}</div>
-        <div className="size">{convertPriceFormat(size)}</div>
-        <div>{convertPriceFormat(cumulativeTotal)}</div>
-      </NogleRowWrap>
-      <div>123</div>
-    </>
+    <NogleRowWrap
+      ref={rowRef}
+      priceColor={priceColor}
+      isSizeChanged={isSizeChanged}
+      sizeGainColor={sizeGainColor}
+      isNewQuote={isNewQuote}
+      newQuoteColor={newQuoteColor}
+      onMouseOver={memoryMouseOver}
+      onMouseOut={() => onMouseOut()}
+    >
+      <div className="price">{convertPriceFormat(price, 1)}</div>
+      <div className="size">{convertPriceFormat(size)}</div>
+      <div>{convertPriceFormat(cumulativeTotal)}</div>
+    </NogleRowWrap>
   );
 };
 
