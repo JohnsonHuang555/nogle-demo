@@ -27,11 +27,12 @@ const Container = styled.div`
     padding: 10px;
     border-bottom: 1px solid #8698aa;
   }
-  .buy-quote-table {
-    padding: 5px 15px 10px 15px;
-  }
   .sell-quote-table {
-    padding: 5px 15px;
+    padding-bottom: 5px;
+  }
+  .buy-quote-table {
+    padding-top: 5px;
+    padding-bottom: 10px;
   }
 `;
 

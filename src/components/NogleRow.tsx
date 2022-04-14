@@ -6,6 +6,10 @@ type NogleRowWrapProps = Pick<NogleRowProps, 'priceColor'>;
 
 const NogleRowWrap = styled.div<NogleRowWrapProps>`
   display: flex;
+  padding: 2px 10px;
+  &:hover {
+    background: #334573;
+  }
   > div {
     flex: 1;
     text-align: right;

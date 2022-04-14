@@ -9,6 +9,7 @@ const NogleTableWrap = styled.div`
   .header {
     display: flex;
     margin-bottom: 5px;
+    padding: 2px 10px;
     > div {
       flex: 1;
       text-align: right;
