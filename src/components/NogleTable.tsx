@@ -35,9 +35,9 @@ const NogleTable = (props: NogleTableProps) => {
           ))}
         </div>
       )}
-      {options.map(({ price, size, cumulativeTotal }, index) => (
+      {options.map(({ price, size, cumulativeTotal }) => (
         <NogleRow
-          key={index}
+          key={price}
           priceColor={priceColor}
           price={price}
           size={size}

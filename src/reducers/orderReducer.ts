@@ -9,6 +9,8 @@ export type State = {
   sellQuote: Quote[];
   lastPrice: string;
   gain: Gain;
+  // prevBuyQuote: Quote[];
+  // prevSellQuote: Quote[];
 };
 
 const initialState: State = {
@@ -16,6 +18,8 @@ const initialState: State = {
   sellQuote: [],
   lastPrice: '',
   gain: Gain.Changed,
+  // prevBuyQuote: [],
+  // prevSellQuote: [],
 };
 
 export type LoadedOrderAction = {

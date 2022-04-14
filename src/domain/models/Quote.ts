@@ -17,4 +17,6 @@ export type Quote = {
   price: string;
   size: string;
   cumulativeTotal: string;
+  // sizeGain?: Gain; // size 增加還是減少
+  // isSizeChanged?: boolean; // 判斷該價錢有無變更
 };
