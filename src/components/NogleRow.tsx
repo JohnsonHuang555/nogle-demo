@@ -40,8 +40,6 @@ type NogleRowProps = {
   cumulativeTotal: string;
   priceColor: PriceColor;
   newQuotes?: string[];
-  onMouseOver: (index: number, e: any) => void;
-  onMouseOut: () => void;
 };
 
 const NogleRow = (props: NogleRowProps) => {
@@ -52,14 +50,12 @@ const NogleRow = (props: NogleRowProps) => {
   const [isNewQuote, setIsNewQuote] = useState(false);
   const [newQuoteColor, setNewQuoteColor] = useState<string>('');
   const {
-    index,
+    // index,
     price,
     size,
     cumulativeTotal,
     priceColor,
     newQuotes,
-    onMouseOver,
-    onMouseOut,
   } = props;
 
   useEffect(() => {
@@ -102,7 +98,7 @@ const NogleRow = (props: NogleRowProps) => {
   };
 
   // 把 callback 保存起來，節省效能，不然會因為 props 變了會一直觸發
-  const memoryMouseOver = useCallback((e) => onMouseOver(index, e), []);
+  // const memoryMouseEnter = useCallback(() => onMouseEnter(index), []);
 
   return (
     <NogleRowWrap
@@ -112,8 +108,6 @@ const NogleRow = (props: NogleRowProps) => {
       sizeGainColor={sizeGainColor}
       isNewQuote={isNewQuote}
       newQuoteColor={newQuoteColor}
-      onMouseOver={memoryMouseOver}
-      onMouseOut={() => onMouseOut()}
     >
       <div className="price">{convertPriceFormat(price, 1)}</div>
       <div className="size">{convertPriceFormat(size)}</div>

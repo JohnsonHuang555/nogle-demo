@@ -2,7 +2,6 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { PriceColor } from '../App';
 import { Quote } from '../domain/models/Quote';
-import { convertPriceFormat } from '../utils/format';
 import NogleRow from './NogleRow';
 
 const NogleTableWrap = styled.div`
@@ -24,13 +23,11 @@ type NogleTableProps = {
   header?: string[];
   quotes: Quote[];
   priceColor: PriceColor;
-  onMouseOver: (index: number, e: any) => void;
-  onMouseOut: () => void;
 };
 
 const NogleTable = (props: NogleTableProps) => {
   const prevQuotesRef = useRef<string[]>();
-  const { header, quotes, priceColor, onMouseOver, onMouseOut } = props;
+  const { header, quotes, priceColor } = props;
   const [newQuotes, setNewQuotes] = useState<string[]>();
 
   const quotesPrices = useMemo(() => {
@@ -62,8 +59,6 @@ const NogleTable = (props: NogleTableProps) => {
           size={size}
           cumulativeTotal={cumulativeTotal}
           newQuotes={newQuotes}
-          onMouseOver={onMouseOver}
-          onMouseOut={onMouseOut}
         />
       ))}
     </NogleTableWrap>

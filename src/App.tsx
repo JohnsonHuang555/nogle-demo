@@ -44,8 +44,8 @@ type TooltipProps = {
 };
 
 const Tooltip = styled.div<TooltipProps>`
-  top: ${(props) => props.top - 74}px;
-  right: -${(props) => props.width + 20}px;
+  top: ${(props) => props.top + 50}px;
+  right: -${(props) => props.width + 11}px;
   color: white;
   position: absolute;
   background: #57626e;
@@ -73,19 +73,23 @@ function App() {
   const lastPrice = useSelector(lastPriceSelector);
   const gain = useSelector(gainSelector);
   const tooltipRef = useRef<HTMLDivElement>(null);
+  const [showTooltip, setShowTooltip] = useState(false);
   const [tooltipTopPosition, setTooltipTopPosition] = useState<number>(0);
+  const [nowHoverIndex, setNowHoverIndex] = useState(-1);
 
   useEffect(() => {
     dispatch(InitialConnect());
   }, [dispatch]);
 
-  const handleMouseOver = (index: number, e: any) => {
-    console.log(e);
-    setTooltipTopPosition(e.clientY);
+  const handleMouseOver = (index: number) => {
+    console.log(index);
+    setShowTooltip(true);
+    setNowHoverIndex(index);
+    setTooltipTopPosition(index * 31);
   };
 
   const handleMouseOut = () => {
-    console.log('out');
+    setShowTooltip(false);
   };
 
   return (
@@ -96,33 +100,28 @@ function App() {
           header={['Price (USD)', 'Size', 'Total']}
           quotes={sellQuote}
           priceColor={PriceColor.Sell}
-          onMouseOver={handleMouseOver}
-          onMouseOut={handleMouseOut}
         />
       </div>
       <NogleLastPrice lastPrice={lastPrice} gain={gain} />
       <div className="buy-quote-table">
-        <NogleTable
-          quotes={buyQuote}
-          priceColor={PriceColor.Buy}
-          onMouseOver={handleMouseOver}
-          onMouseOut={handleMouseOut}
-        />
+        <NogleTable quotes={buyQuote} priceColor={PriceColor.Buy} />
       </div>
-      <Tooltip
-        ref={tooltipRef}
-        width={tooltipRef.current?.clientWidth as number}
-        top={tooltipTopPosition}
-      >
-        <div>
-          Avg Price:{' '}
-          <span className="value">{convertPriceFormat('10000')}</span> USD
-        </div>
-        <div>
-          Total Value:{' '}
-          <span className="value">{convertPriceFormat('10000')}</span> USD
-        </div>
-      </Tooltip>
+      {showTooltip && (
+        <Tooltip
+          ref={tooltipRef}
+          width={tooltipRef.current?.clientWidth as number}
+          top={tooltipTopPosition}
+        >
+          <div>
+            Avg Price:{' '}
+            <span className="value">{convertPriceFormat('10000')}</span> USD
+          </div>
+          <div>
+            Total Value:{' '}
+            <span className="value">{convertPriceFormat('10000')}</span> USD
+          </div>
+        </Tooltip>
+      )}
     </Container>
   );
 }
