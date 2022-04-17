@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { PriceColor } from '../App';
 import { convertPriceFormat } from '../utils/format';
@@ -40,23 +40,27 @@ type NogleRowProps = {
   cumulativeTotal: string;
   priceColor: PriceColor;
   newQuotes?: string[];
+  onMouseEnter: (index: number) => void;
+  onMouseLeave: () => void;
 };
 
 const NogleRow = (props: NogleRowProps) => {
+  const {
+    index,
+    price,
+    size,
+    cumulativeTotal,
+    priceColor,
+    newQuotes,
+    onMouseEnter,
+    onMouseLeave,
+  } = props;
   const prevSizeRef = useRef<string>();
   const rowRef = useRef<HTMLDivElement>(null);
   const [isSizeChanged, setIsSizeChanged] = useState(false);
   const [sizeGainColor, setSizeGainColor] = useState<string>('');
   const [isNewQuote, setIsNewQuote] = useState(false);
   const [newQuoteColor, setNewQuoteColor] = useState<string>('');
-  const {
-    // index,
-    price,
-    size,
-    cumulativeTotal,
-    priceColor,
-    newQuotes,
-  } = props;
 
   useEffect(() => {
     if (prevSizeRef.current) {
@@ -98,7 +102,7 @@ const NogleRow = (props: NogleRowProps) => {
   };
 
   // 把 callback 保存起來，節省效能，不然會因為 props 變了會一直觸發
-  // const memoryMouseEnter = useCallback(() => onMouseEnter(index), []);
+  const memoryMouseEnter = useCallback(() => onMouseEnter(index), [index]);
 
   return (
     <NogleRowWrap
@@ -108,6 +112,8 @@ const NogleRow = (props: NogleRowProps) => {
       sizeGainColor={sizeGainColor}
       isNewQuote={isNewQuote}
       newQuoteColor={newQuoteColor}
+      onMouseEnter={memoryMouseEnter}
+      onMouseLeave={onMouseLeave}
     >
       <div className="price">{convertPriceFormat(price, 1)}</div>
       <div className="size">{convertPriceFormat(size)}</div>

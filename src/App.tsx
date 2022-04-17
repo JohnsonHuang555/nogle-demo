@@ -1,5 +1,5 @@
 import './App.css';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
 import NogleTable from './components/NogleTable';
 import NogleLastPrice from './components/NogleLastPrice';
@@ -39,13 +39,12 @@ const Container = styled.div`
 `;
 
 type TooltipProps = {
-  width: number;
   top: number;
 };
 
 const Tooltip = styled.div<TooltipProps>`
-  top: ${(props) => props.top + 50}px;
-  right: -${(props) => props.width + 11}px;
+  top: ${(props) => props.top}px;
+  right: -237px;
   color: white;
   position: absolute;
   background: #57626e;
@@ -72,24 +71,41 @@ function App() {
   const buyQuote = useSelector(buyQuoteSelector);
   const lastPrice = useSelector(lastPriceSelector);
   const gain = useSelector(gainSelector);
-  const tooltipRef = useRef<HTMLDivElement>(null);
   const [showTooltip, setShowTooltip] = useState(false);
   const [tooltipTopPosition, setTooltipTopPosition] = useState<number>(0);
   const [nowHoverIndex, setNowHoverIndex] = useState(-1);
+  const [nowHoverType, setNowHoverType] = useState('');
 
   useEffect(() => {
     dispatch(InitialConnect());
   }, [dispatch]);
 
-  const handleMouseOver = (index: number) => {
-    console.log(index);
-    setShowTooltip(true);
+  useEffect(() => {
+    if (nowHoverIndex !== -1) {
+      if (nowHoverType === 'sell') {
+        setTooltipTopPosition(50 + nowHoverIndex * 31);
+      } else {
+        setTooltipTopPosition(380 + nowHoverIndex * 31);
+      }
+      setShowTooltip(true);
+      setNowHoverIndex(nowHoverIndex);
+    } else {
+      setShowTooltip(false);
+    }
+  }, [nowHoverIndex, nowHoverType]);
+
+  const handleSellQuoteMouseOver = (index: number) => {
+    setNowHoverType('sell');
     setNowHoverIndex(index);
-    setTooltipTopPosition(index * 31);
   };
 
-  const handleMouseOut = () => {
-    setShowTooltip(false);
+  const handleBuyQuoteMouseOver = (index: number) => {
+    setNowHoverType('buy');
+    setNowHoverIndex(index);
+  };
+
+  const handleMouseLeave = () => {
+    setNowHoverIndex(-1);
   };
 
   return (
@@ -100,18 +116,21 @@ function App() {
           header={['Price (USD)', 'Size', 'Total']}
           quotes={sellQuote}
           priceColor={PriceColor.Sell}
+          onMouseEnter={handleSellQuoteMouseOver}
+          onMouseLeave={handleMouseLeave}
         />
       </div>
       <NogleLastPrice lastPrice={lastPrice} gain={gain} />
       <div className="buy-quote-table">
-        <NogleTable quotes={buyQuote} priceColor={PriceColor.Buy} />
+        <NogleTable
+          quotes={buyQuote}
+          priceColor={PriceColor.Buy}
+          onMouseEnter={handleBuyQuoteMouseOver}
+          onMouseLeave={handleMouseLeave}
+        />
       </div>
       {showTooltip && (
-        <Tooltip
-          ref={tooltipRef}
-          width={tooltipRef.current?.clientWidth as number}
-          top={tooltipTopPosition}
-        >
+        <Tooltip top={tooltipTopPosition}>
           <div>
             Avg Price:{' '}
             <span className="value">{convertPriceFormat('10000')}</span> USD

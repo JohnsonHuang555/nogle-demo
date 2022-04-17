@@ -23,11 +23,13 @@ type NogleTableProps = {
   header?: string[];
   quotes: Quote[];
   priceColor: PriceColor;
+  onMouseEnter: (index: number) => void;
+  onMouseLeave: () => void;
 };
 
 const NogleTable = (props: NogleTableProps) => {
   const prevQuotesRef = useRef<string[]>();
-  const { header, quotes, priceColor } = props;
+  const { header, quotes, priceColor, onMouseEnter, onMouseLeave } = props;
   const [newQuotes, setNewQuotes] = useState<string[]>();
 
   const quotesPrices = useMemo(() => {
@@ -59,6 +61,8 @@ const NogleTable = (props: NogleTableProps) => {
           size={size}
           cumulativeTotal={cumulativeTotal}
           newQuotes={newQuotes}
+          onMouseEnter={onMouseEnter}
+          onMouseLeave={onMouseLeave}
         />
       ))}
     </NogleTableWrap>
