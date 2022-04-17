@@ -54,7 +54,7 @@ export const avgPriceSelector = (store: StoreState) => {
 export const totalValueSelector = (store: StoreState) => {
   const order = store.order;
   if (order.nowHoverType === QuoteType.Sell) {
-    const dataTable = order.sellQuote.filter(
+    const dataTable = sellQuoteSelector(store).filter(
       (_s, index) => index < MAX_QUOTE && index >= order.nowHoverIndex
     );
     return dataTable.reduce((acc, current) => {
@@ -65,7 +65,7 @@ export const totalValueSelector = (store: StoreState) => {
       );
     }, 0);
   } else if (order.nowHoverType === QuoteType.Buy) {
-    const dataTable = order.buyQuote.filter(
+    const dataTable = buyQuoteSelector(store).filter(
       (_s, index) => index < MAX_QUOTE && index <= order.nowHoverIndex
     );
     return dataTable.reduce((acc, current) => {
