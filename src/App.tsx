@@ -124,7 +124,6 @@ function App() {
           header={['Price (USD)', 'Size', 'Total']}
           quotes={sellQuote}
           priceColor={PriceColor.Sell}
-          nowHoverIndex={nowHoverIndex}
           onMouseEnter={handleSellQuoteMouseOver}
           onMouseLeave={handleMouseLeave}
         />
@@ -134,7 +133,6 @@ function App() {
         <NogleTable
           quotes={buyQuote}
           priceColor={PriceColor.Buy}
-          nowHoverIndex={nowHoverIndex}
           onMouseEnter={handleBuyQuoteMouseOver}
           onMouseLeave={handleMouseLeave}
         />

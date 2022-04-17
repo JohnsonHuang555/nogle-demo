@@ -23,21 +23,13 @@ type NogleTableProps = {
   header?: string[];
   quotes: Quote[];
   priceColor: PriceColor;
-  nowHoverIndex: number;
   onMouseEnter: (index: number) => void;
   onMouseLeave: () => void;
 };
 
 const NogleTable = (props: NogleTableProps) => {
   const prevQuotesRef = useRef<string[]>();
-  const {
-    header,
-    quotes,
-    priceColor,
-    nowHoverIndex,
-    onMouseEnter,
-    onMouseLeave,
-  } = props;
+  const { header, quotes, priceColor, onMouseEnter, onMouseLeave } = props;
   const [newQuotes, setNewQuotes] = useState<string[]>();
 
   const quotesPrices = useMemo(() => {

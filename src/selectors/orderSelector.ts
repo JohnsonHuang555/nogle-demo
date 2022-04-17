@@ -32,15 +32,15 @@ export const nowHoverTypeSelector = (store: StoreState) =>
 export const avgPriceSelector = (store: StoreState) => {
   const order = store.order;
   if (order.nowHoverType === QuoteType.Sell) {
-    const dataTable = order.sellQuote.filter(
-      (_s, index) => index < MAX_QUOTE && index >= order.nowHoverIndex
+    const dataTable = sellQuoteSelector(store).filter(
+      (_s, index) => index >= order.nowHoverIndex && index < MAX_QUOTE
     );
     const total = dataTable.reduce((acc, current) => {
       return acc + Number(current.price);
     }, 0);
     return total / dataTable.length;
   } else if (order.nowHoverType === QuoteType.Buy) {
-    const dataTable = order.buyQuote.filter(
+    const dataTable = buyQuoteSelector(store).filter(
       (_s, index) => index < MAX_QUOTE && index <= order.nowHoverIndex
     );
     const total = dataTable.reduce((acc, current) => {
