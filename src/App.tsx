@@ -8,11 +8,13 @@ import { InitialConnect } from './actions/SocketAction';
 import {
   avgPriceSelector,
   buyQuoteSelector,
+  buyQuoteTotalCumulativeSelector,
   gainSelector,
   lastPriceSelector,
   nowHoverIndexSelector,
   nowHoverTypeSelector,
   sellQuoteSelector,
+  sellQuoteTotalCumulativeSelector,
   totalValueSelector,
 } from './selectors/orderSelector';
 import { convertPriceFormat } from './utils/format';
@@ -82,6 +84,11 @@ function App() {
   const nowHoverType = useSelector(nowHoverTypeSelector);
   const avgPrice = useSelector(avgPriceSelector);
   const totalValue = useSelector(totalValueSelector);
+  const sellQuoteTotalCumulative = useSelector(
+    sellQuoteTotalCumulativeSelector
+  );
+  const buyQuoteTotalCumulative = useSelector(buyQuoteTotalCumulativeSelector);
+
   const tooltipRef = useRef<HTMLDivElement>(null);
 
   const [showTooltip, setShowTooltip] = useState(false);
@@ -124,6 +131,7 @@ function App() {
           header={['Price (USD)', 'Size', 'Total']}
           quotes={sellQuote}
           priceColor={PriceColor.Sell}
+          sumCumulative={sellQuoteTotalCumulative}
           onMouseEnter={handleSellQuoteMouseOver}
           onMouseLeave={handleMouseLeave}
         />
@@ -132,6 +140,7 @@ function App() {
       <div className="buy-quote-table">
         <NogleTable
           quotes={buyQuote}
+          sumCumulative={buyQuoteTotalCumulative}
           priceColor={PriceColor.Buy}
           onMouseEnter={handleBuyQuoteMouseOver}
           onMouseLeave={handleMouseLeave}

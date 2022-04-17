@@ -16,9 +16,6 @@ const NogleRowWrap = styled.div<NogleRowWrapProps>`
   padding: 2px 10px;
   transition: all 0.3s;
   background: ${(props) => (props.isNewQuote ? props.newQuoteColor : '')};
-  /* &:hover {
-    background: #334573 !important;
-  } */
   > div {
     flex: 1;
     text-align: right;
@@ -34,6 +31,27 @@ const NogleRowWrap = styled.div<NogleRowWrapProps>`
   }
 `;
 
+const TotalWrap = styled.div`
+  position: relative;
+`;
+
+type RatioWrapProps = Pick<NogleRowProps, 'priceColor' | 'cumulativeRatio'>;
+
+const RatioWrap = styled.div<RatioWrapProps>`
+  position: absolute;
+  background: ${(props) => {
+    if (props.priceColor === PriceColor.Sell) {
+      return 'rgba(255, 91, 90, 0.5)';
+    } else {
+      return 'rgba(0, 177, 93, 0.5)';
+    }
+  }};
+  top: 0;
+  height: 100%;
+  width: ${(props) => props.cumulativeRatio}%;
+  left: 10px;
+`;
+
 type NogleRowProps = {
   index: number;
   price: string;
@@ -42,6 +60,7 @@ type NogleRowProps = {
   priceColor: PriceColor;
   newQuotes?: string[];
   showHoverBackground: boolean;
+  cumulativeRatio: string;
   onMouseEnter: (index: number) => void;
   onMouseLeave: () => void;
 };
@@ -55,6 +74,7 @@ const NogleRow = (props: NogleRowProps) => {
     priceColor,
     newQuotes,
     showHoverBackground,
+    cumulativeRatio,
     onMouseEnter,
     onMouseLeave,
   } = props;
@@ -121,7 +141,10 @@ const NogleRow = (props: NogleRowProps) => {
     >
       <div className="price">{convertPriceFormat(price, 1)}</div>
       <div className="size">{convertPriceFormat(size)}</div>
-      <div>{convertPriceFormat(cumulativeTotal)}</div>
+      <TotalWrap>
+        <RatioWrap priceColor={priceColor} cumulativeRatio={cumulativeRatio} />
+        {convertPriceFormat(cumulativeTotal)}
+      </TotalWrap>
     </NogleRowWrap>
   );
 };

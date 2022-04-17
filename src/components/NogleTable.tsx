@@ -23,13 +23,21 @@ type NogleTableProps = {
   header?: string[];
   quotes: Quote[];
   priceColor: PriceColor;
+  sumCumulative: number;
   onMouseEnter: (index: number) => void;
   onMouseLeave: () => void;
 };
 
 const NogleTable = (props: NogleTableProps) => {
   const prevQuotesRef = useRef<string[]>();
-  const { header, quotes, priceColor, onMouseEnter, onMouseLeave } = props;
+  const {
+    header,
+    quotes,
+    priceColor,
+    sumCumulative,
+    onMouseEnter,
+    onMouseLeave,
+  } = props;
   const [newQuotes, setNewQuotes] = useState<string[]>();
 
   const quotesPrices = useMemo(() => {
@@ -80,6 +88,10 @@ const NogleTable = (props: NogleTableProps) => {
           cumulativeTotal={cumulativeTotal}
           newQuotes={newQuotes}
           showHoverBackground={false}
+          cumulativeRatio={(
+            (Number(cumulativeTotal) / sumCumulative) *
+            100
+          ).toFixed(2)}
           onMouseEnter={onMouseEnter}
           onMouseLeave={onMouseLeave}
         />

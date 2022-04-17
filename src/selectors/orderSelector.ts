@@ -78,3 +78,15 @@ export const totalValueSelector = (store: StoreState) => {
   }
   return 0;
 };
+
+export const sellQuoteTotalCumulativeSelector = (store: StoreState) => {
+  return sellQuoteSelector(store).reduce((acc, current) => {
+    return acc + Number(current.cumulativeTotal);
+  }, 0);
+};
+
+export const buyQuoteTotalCumulativeSelector = (store: StoreState) => {
+  return buyQuoteSelector(store).reduce((acc, current) => {
+    return acc + Number(current.cumulativeTotal);
+  }, 0);
+};
