@@ -1,17 +1,23 @@
 import './App.css';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import NogleTable from './components/NogleTable';
 import NogleLastPrice from './components/NogleLastPrice';
-import { useDispatch, useSelector, useStore } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { InitialConnect } from './actions/SocketAction';
 import {
+  avgPriceSelector,
   buyQuoteSelector,
   gainSelector,
   lastPriceSelector,
+  nowHoverIndexSelector,
+  nowHoverTypeSelector,
   sellQuoteSelector,
+  totalValueSelector,
 } from './selectors/orderSelector';
 import { convertPriceFormat } from './utils/format';
+import { QuoteType } from './domain/models/Quote';
+import { setTooltip } from './actions/OrderAction';
 
 export enum PriceColor {
   Sell = '#FF5B5A',
@@ -40,11 +46,12 @@ const Container = styled.div`
 
 type TooltipProps = {
   top: number;
+  width: number;
 };
 
 const Tooltip = styled.div<TooltipProps>`
   top: ${(props) => props.top}px;
-  right: -237px;
+  right: -${(props) => props.width + 11}px;
   color: white;
   position: absolute;
   background: #57626e;
@@ -71,10 +78,14 @@ function App() {
   const buyQuote = useSelector(buyQuoteSelector);
   const lastPrice = useSelector(lastPriceSelector);
   const gain = useSelector(gainSelector);
+  const nowHoverIndex = useSelector(nowHoverIndexSelector);
+  const nowHoverType = useSelector(nowHoverTypeSelector);
+  const avgPrice = useSelector(avgPriceSelector);
+  const totalValue = useSelector(totalValueSelector);
+  const tooltipRef = useRef<HTMLDivElement>(null);
+
   const [showTooltip, setShowTooltip] = useState(false);
   const [tooltipTopPosition, setTooltipTopPosition] = useState<number>(0);
-  const [nowHoverIndex, setNowHoverIndex] = useState(-1);
-  const [nowHoverType, setNowHoverType] = useState('');
 
   useEffect(() => {
     dispatch(InitialConnect());
@@ -82,30 +93,27 @@ function App() {
 
   useEffect(() => {
     if (nowHoverIndex !== -1) {
-      if (nowHoverType === 'sell') {
+      if (nowHoverType === QuoteType.Sell) {
         setTooltipTopPosition(50 + nowHoverIndex * 31);
       } else {
         setTooltipTopPosition(380 + nowHoverIndex * 31);
       }
       setShowTooltip(true);
-      setNowHoverIndex(nowHoverIndex);
     } else {
       setShowTooltip(false);
     }
   }, [nowHoverIndex, nowHoverType]);
 
   const handleSellQuoteMouseOver = (index: number) => {
-    setNowHoverType('sell');
-    setNowHoverIndex(index);
+    dispatch(setTooltip(index, QuoteType.Sell));
   };
 
   const handleBuyQuoteMouseOver = (index: number) => {
-    setNowHoverType('buy');
-    setNowHoverIndex(index);
+    dispatch(setTooltip(index, QuoteType.Buy));
   };
 
   const handleMouseLeave = () => {
-    setNowHoverIndex(-1);
+    dispatch(setTooltip(-1, ''));
   };
 
   return (
@@ -116,6 +124,7 @@ function App() {
           header={['Price (USD)', 'Size', 'Total']}
           quotes={sellQuote}
           priceColor={PriceColor.Sell}
+          nowHoverIndex={nowHoverIndex}
           onMouseEnter={handleSellQuoteMouseOver}
           onMouseLeave={handleMouseLeave}
         />
@@ -125,19 +134,30 @@ function App() {
         <NogleTable
           quotes={buyQuote}
           priceColor={PriceColor.Buy}
+          nowHoverIndex={nowHoverIndex}
           onMouseEnter={handleBuyQuoteMouseOver}
           onMouseLeave={handleMouseLeave}
         />
       </div>
       {showTooltip && (
-        <Tooltip top={tooltipTopPosition}>
+        <Tooltip
+          top={tooltipTopPosition}
+          ref={tooltipRef}
+          width={tooltipRef.current?.clientWidth as number}
+        >
           <div>
             Avg Price:{' '}
-            <span className="value">{convertPriceFormat('10000')}</span> USD
+            <span className="value">
+              {convertPriceFormat(String(avgPrice.toFixed(1)), 1)}
+            </span>{' '}
+            USD
           </div>
           <div>
             Total Value:{' '}
-            <span className="value">{convertPriceFormat('10000')}</span> USD
+            <span className="value">
+              {convertPriceFormat(String(totalValue.toFixed(1)))}
+            </span>{' '}
+            USD
           </div>
         </Tooltip>
       )}

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { PriceColor } from '../App';
 import { Quote } from '../domain/models/Quote';
@@ -23,13 +23,21 @@ type NogleTableProps = {
   header?: string[];
   quotes: Quote[];
   priceColor: PriceColor;
+  nowHoverIndex: number;
   onMouseEnter: (index: number) => void;
   onMouseLeave: () => void;
 };
 
 const NogleTable = (props: NogleTableProps) => {
   const prevQuotesRef = useRef<string[]>();
-  const { header, quotes, priceColor, onMouseEnter, onMouseLeave } = props;
+  const {
+    header,
+    quotes,
+    priceColor,
+    nowHoverIndex,
+    onMouseEnter,
+    onMouseLeave,
+  } = props;
   const [newQuotes, setNewQuotes] = useState<string[]>();
 
   const quotesPrices = useMemo(() => {
@@ -42,6 +50,24 @@ const NogleTable = (props: NogleTableProps) => {
     // 存前一個值
     prevQuotesRef.current = quotesPrices;
   }, [quotesPrices]);
+
+  // const checkShowHoverBackground = useCallback(
+  //   (index: number): boolean => {
+  //     if (priceColor === PriceColor.Sell) {
+  //       if (index < 8 && index >= nowHoverIndex) {
+  //         return true;
+  //       }
+  //       return false;
+  //     } else if (priceColor === PriceColor.Buy) {
+  //       if (index > 8 && index <= nowHoverIndex) {
+  //         return true;
+  //       }
+  //       return false;
+  //     }
+  //     return false;
+  //   },
+  //   [nowHoverIndex]
+  // );
 
   return (
     <NogleTableWrap>
@@ -61,6 +87,7 @@ const NogleTable = (props: NogleTableProps) => {
           size={size}
           cumulativeTotal={cumulativeTotal}
           newQuotes={newQuotes}
+          showHoverBackground={false}
           onMouseEnter={onMouseEnter}
           onMouseLeave={onMouseLeave}
         />

@@ -1,7 +1,8 @@
-import { Gain, Order, Quote } from '../domain/models/Quote';
+import { Gain, Order, Quote, QuoteType } from '../domain/models/Quote';
 
 export enum ActionType {
   LoadedOrder = 'LoadedOrder',
+  ShowTooltip = 'ShowTooltip',
 }
 
 export type State = {
@@ -9,8 +10,8 @@ export type State = {
   sellQuote: Quote[];
   lastPrice: string;
   gain: Gain;
-  // prevBuyQuote: Quote[];
-  // prevSellQuote: Quote[];
+  nowHoverIndex: number;
+  nowHoverType: QuoteType | '';
 };
 
 const initialState: State = {
@@ -18,8 +19,8 @@ const initialState: State = {
   sellQuote: [],
   lastPrice: '',
   gain: Gain.Changed,
-  // prevBuyQuote: [],
-  // prevSellQuote: [],
+  nowHoverIndex: -1,
+  nowHoverType: '',
 };
 
 export type LoadedOrderAction = {
@@ -27,7 +28,13 @@ export type LoadedOrderAction = {
   order: Order;
 };
 
-type Action = LoadedOrderAction;
+export type ShowTooltipAction = {
+  type: ActionType.ShowTooltip;
+  hoverIndex: number;
+  quoteType: QuoteType;
+};
+
+type Action = LoadedOrderAction | ShowTooltipAction;
 
 const reducer = (state = initialState, action: Action): State => {
   switch (action.type) {
@@ -39,6 +46,13 @@ const reducer = (state = initialState, action: Action): State => {
         sellQuote,
         lastPrice,
         gain,
+      };
+    }
+    case ActionType.ShowTooltip: {
+      return {
+        ...state,
+        nowHoverIndex: action.hoverIndex,
+        nowHoverType: action.quoteType,
       };
     }
     default: {

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { PriceColor } from '../App';
 import { convertPriceFormat } from '../utils/format';
@@ -8,6 +8,7 @@ type NogleRowWrapProps = Pick<NogleRowProps, 'priceColor'> & {
   sizeGainColor: string;
   isNewQuote: boolean;
   newQuoteColor: string;
+  showHoverBackground: boolean;
 };
 
 const NogleRowWrap = styled.div<NogleRowWrapProps>`
@@ -40,6 +41,7 @@ type NogleRowProps = {
   cumulativeTotal: string;
   priceColor: PriceColor;
   newQuotes?: string[];
+  showHoverBackground: boolean;
   onMouseEnter: (index: number) => void;
   onMouseLeave: () => void;
 };
@@ -52,6 +54,7 @@ const NogleRow = (props: NogleRowProps) => {
     cumulativeTotal,
     priceColor,
     newQuotes,
+    showHoverBackground,
     onMouseEnter,
     onMouseLeave,
   } = props;
@@ -102,7 +105,7 @@ const NogleRow = (props: NogleRowProps) => {
   };
 
   // 把 callback 保存起來，節省效能，不然會因為 props 變了會一直觸發
-  const memoryMouseEnter = useCallback(() => onMouseEnter(index), [index]);
+  // const memoryMouseEnter = useCallback(() => onMouseEnter(index), [index]);
 
   return (
     <NogleRowWrap
@@ -112,7 +115,8 @@ const NogleRow = (props: NogleRowProps) => {
       sizeGainColor={sizeGainColor}
       isNewQuote={isNewQuote}
       newQuoteColor={newQuoteColor}
-      onMouseEnter={memoryMouseEnter}
+      showHoverBackground={showHoverBackground}
+      onMouseEnter={() => onMouseEnter(index)}
       onMouseLeave={onMouseLeave}
     >
       <div className="price">{convertPriceFormat(price, 1)}</div>
